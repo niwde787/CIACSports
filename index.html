@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      window.addEventListener('error', function(e) {
+        if (e.message) {
+            document.body.innerHTML += '<div style="position:fixed;top:0;left:0;z-index:9999999;background:red;color:white;padding:20px;font-family:monospace;"><h3>Module Load Error</h3><pre>' + e.message + '</pre></div>';
+            const splash = document.getElementById('splash-screen');
+            if(splash) splash.style.display = 'none';
+        }
+      });
+    </script>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/niwde787/CJF/main/CJF_Icon_512.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0D1117" />
+    <title>Live Snaps</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      :root, [data-theme="dark"] {
+        /* Modern Dark Theme (Inspired by user image) */
+
+        /* Backgrounds */
+        --bg-primary: #0D1117;      /* Very dark, slightly blue charcoal */
+        --bg-secondary: #161B22;     /* Lighter card background */
+        --bg-tertiary: #21262D;      /* Lighter for hovers/active */
+        --bg-glass-effect: rgba(22, 27, 34, 0.7);
+        
+        /* Borders */
+        --border-primary: #30363D;   /* Subtle border color */
+
+        /* Text */
+        --text-primary: #C9D1D9;      /* Light grey, not pure white */
+        --text-secondary: #8B949E;   /* Medium grey */
+        
+        /* Accents */
+        --accent-primary: #58A6FF;   /* Bright, accessible blue */
+        --accent-primary-hover: #388BFD;
+        --accent-button-primary: var(--accent-primary);
+        --accent-button-primary-hover: var(--accent-primary-hover);
+        --accent-button-text-color: #0D1117; /* Dark text on bright blue button for contrast */
+        
+        --accent-secondary: #238636;      /* Vibrant Green (Offense) */
+        --accent-secondary-hover: #2EA043;
+        
+        --accent-defense: #DA3633;        /* Strong Red (Defense) */
+        --accent-defense-hover: #F85149;
+        
+        --accent-special: #8957E5;        /* Vibrant Purple (Special Teams) */
+        --accent-special-hover: #A475F5;
+
+        /* Semantic & Status */
+        --accent-danger: #DA3633;
+        --accent-danger-hover: #C92E2B;
+        --accent-warning: #F5A623;
+        
+        --status-playing: var(--accent-primary);
+        --status-injured: var(--accent-danger);
+        --status-absent: var(--accent-warning);
+        --status-discipline: var(--accent-special);
+        
+        --status-playing-text: #FFFFFF;
+        --status-injured-text: #FFFFFF;
+        --status-absent-text: #111827;
+        --status-discipline-text: #FFFFFF;
+        
+        --font-family-sans: 'Inter', sans-serif;
+
+        --logo-color: var(--accent-secondary);
+      }
+
+      [data-theme="light"] {
+        /* Modern Light Theme (Inspired by user image) */
+
+        /* Backgrounds */
+        --bg-primary: #F0F2F5;      /* Light grey background */
+        --bg-secondary: #FFFFFF;     /* White for cards */
+        --bg-tertiary: #E4E6EB;     /* Light grey for hovers/dividers */
+        --bg-glass-effect: rgba(255, 255, 255, 0.8);
+        
+        /* Borders */
+        --border-primary: #DADDE1;   /* Subtle grey border */
+
+        /* Text */
+        --text-primary: #050505;      /* Almost black for max contrast */
+        --text-secondary: #65676B;   /* Medium grey */
+        
+        /* Accents */
+        --accent-primary: #1877F2;        /* Strong, standard Blue */
+        --accent-primary-hover: #166FE5;
+        --accent-button-primary: var(--accent-primary);
+        --accent-button-primary-hover: var(--accent-primary-hover);
+        --accent-button-text-color: #FFFFFF;
+        
+        /* Functional color-coding for play types */
+        --accent-secondary: #31A24C;      /* Strong Green for Offense */
+        --accent-secondary-hover: #2B8A40;
+        
+        --accent-defense: #FA383E;        /* Strong Red for Defense */
+        --accent-defense-hover: #E32D32;
+        
+        --accent-special: #8A3AB9;        /* Strong Purple for Special Teams */
+        --accent-special-hover: #7E22CE;
+
+        /* Semantic & Status */
+        --accent-danger: #FA383E;
+        --accent-danger-hover: #E32D32;
+        --accent-warning: #F97316;
+        
+        --status-playing: var(--accent-primary);
+        --status-injured: var(--accent-danger);
+        --status-absent: var(--accent-warning);
+        --status-discipline: #475569;
+        
+        --status-playing-text: #FFFFFF;
+        --status-injured-text: #FFFFFF;
+        --status-absent-text: #111827;
+        --status-discipline-text: #FFFFFF;
+
+        --logo-color: var(--text-primary);
+      }
+
+      [data-theme="material-you"] {
+        /* Material You (M3) Inspired Dark Theme */
+
+        /* M3 Roles - Primary */
+        --m3-primary: #AEC6FF;
+        --m3-on-primary: #002E69;
+        --m3-primary-container: #004494;
+        --m3-on-primary-container: #D8E2FF;
+
+        /* M3 Roles - Secondary */
+        --m3-secondary: #C0C6DC;
+        --m3-on-secondary: #283141;
+        --m3-secondary-container: #3F4759;
+        --m3-on-secondary-container: #DCE2F9;
+
+        /* M3 Roles - Tertiary */
+        --m3-tertiary: #E0B6F3;
+        --m3-on-tertiary: #42294A;
+        --m3-tertiary-container: #5A3F61;
+        --m3-on-tertiary-container: #FAD7FF;
+
+        /* M3 Roles - Surfaces */
+        --m3-background: #1B1B1F;
+        --m3-on-background: #E4E2E6;
+        --m3-surface: #1B1B1F;
+        --m3-on-surface: #E4E2E6;
+        --m3-surface-variant: #45464F;
+        --m3-on-surface-variant: #C5C6D0;
+        --m3-outline: #8F909A;
+        --m3-surface-container-highest: #34353A;
+
+        /* M3 Roles - Error */
+        --m3-error: #F2B8B5;
+        --m3-on-error: #601410;
+        --m3-error-container: #8C1D18;
+        --m3-on-error-container: #F9DEDC;
+
+        /* Backgrounds */
+        --bg-primary: var(--m3-surface);
+        --bg-secondary: var(--m3-surface-container-highest);
+        --bg-tertiary: var(--m3-surface-variant);
+        --bg-glass-effect: rgba(40, 49, 65, 0.7);
+
+        /* Borders */
+        --border-primary: var(--m3-outline);
+
+        /* Text */
+        --text-primary: var(--m3-on-surface);
+        --text-secondary: var(--m3-on-surface-variant);
+
+        /* Accents */
+        --accent-primary: var(--m3-primary);
+        --accent-primary-hover: #D8E2FF;
+        --accent-button-primary: var(--m3-primary-container);
+        --accent-button-primary-hover: #215fa6;
+        --accent-button-text-color: var(--m3-on-primary-container);
+
+
+        /* Functional color-coding */
+        --accent-secondary: #74D98B; /* M3-style Green */
+        --accent-secondary-hover: #5EC774;
+        
+        --accent-defense: var(--m3-error-container);
+        --accent-defense-hover: #a12e28;
+        
+        --accent-special: var(--m3-tertiary);
+        --accent-special-hover: #E8C8F8;
+
+        /* Semantic & Status */
+        --accent-danger: var(--m3-error);
+        --accent-danger-hover: #F6C8C5;
+        --accent-warning: #FFB86F;
+        
+        --status-playing: var(--accent-primary);
+        --status-injured: var(--accent-danger);
+        --status-absent: var(--accent-warning);
+        --status-discipline: var(--m3-secondary);
+        
+        --status-playing-text: var(--m3-on-primary-container);
+        --status-injured-text: var(--m3-on-error);
+        --status-absent-text: #3D2900;
+        --status-discipline-text: var(--m3-on-secondary);
+
+        --logo-color: var(--accent-primary);
+      }
+      
+      /* Rounded corners for modern aesthetic */
+      [data-theme="dark"] .rounded-lg, [data-theme="light"] .rounded-lg, [data-theme="material-you"] .rounded-lg { border-radius: 12px; }
+      [data-theme="dark"] .rounded-xl, [data-theme="light"] .rounded-xl, [data-theme="material-you"] .rounded-xl { border-radius: 16px; }
+      [data-theme="dark"] .rounded-2xl, [data-theme="light"] .rounded-2xl { border-radius: 24px; }
+      
+      [data-theme="material-you"] .glass-effect {
+        -webkit-backdrop-filter: blur(24px);
+        backdrop-filter: blur(24px);
+      }
+
+      body {
+        font-family: var(--font-family-sans);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      
+      .glass-effect {
+        background: var(--bg-glass-effect);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border-primary);
+      }
+
+      .logo-img {
+        -webkit-mask-image: url(https://raw.githubusercontent.com/niwde787/CJF/main/SNAPS_H.svg);
+        mask-image: url(https://raw.githubusercontent.com/niwde787/CJF/main/SNAPS_H.svg);
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-position: center;
+        mask-position: center;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        background-color: var(--logo-color);
+        transition: all 0.3s ease;
+      }
+      
+      [data-theme="dark"] .logo-img {
+        background-image: url(https://raw.githubusercontent.com/niwde787/CJF/1f4df5f83d0fbb85bc6ea1ac8ed36765f518e995/SNAPS_H.svg);
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+
+      .cover-flow-reflect {
+        -webkit-box-reflect: below 2px linear-gradient(transparent, transparent, rgba(0, 0, 0, 0.4));
+      }
+      /* Styles for custom details/summary dropdown */
+      details[open] .details-open-rotate {
+        transform: rotate(90deg);
+      }
+      summary {
+        list-style: none; /* For Firefox */
+      }
+      summary::-webkit-details-marker {
+        display: none; /* For Chrome */
+      }
+      /* Ticker Animation */
+      @keyframes ticker-scroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+      }
+
+      @keyframes draw-arrow {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
+
+      @keyframes draw-check {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      .animate-draw-check {
+        stroke-dasharray: 24;
+        stroke-dashoffset: 24;
+        animation: draw-check 0.5s ease-out forwards;
+      }
+
+      /* View Transitions */
+      @keyframes slide-in-from-right {
+        from { transform: translateX(20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slide-in-from-left {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .animate-slide-in-from-right {
+        animation: slide-in-from-right 0.3s ease-out forwards;
+      }
+
+      .animate-slide-in-from-left {
+        animation: slide-in-from-left 0.3s ease-out forwards;
+      }
+
+      .animate-fade-in {
+        animation: fade-in 0.3s ease-out forwards;
+      }
+
+      /* Splash Screen Styles */
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        background-color: var(--bg-primary);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        transition: opacity 0.5s ease-in-out;
+        opacity: 1;
+      }
+
+      #splash-screen.fade-out {
+        opacity: 0;
+      }
+
+      .splash-logo {
+        height: 20vh;
+        width: auto;
+        animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+      }
+
+      .progress-bar-container {
+        width: 200px;
+        height: 8px;
+        background-color: var(--border-primary);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-bar-value {
+        width: 100%;
+        height: 100%;
+        background-color: var(--accent-primary);
+        transform-origin: left;
+        animation: fill-progress 1s ease-out forwards;
+      }
+
+      @keyframes fill-progress {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.9;
+        }
+      }
+
+      /* Print-specific styles for the Help Modal */
+      @media print {
+        body > * {
+          visibility: hidden !important;
+        }
+        #modal-root,
+        #modal-root > * {
+          visibility: visible !important;
+        }
+        body {
+          background-color: white !important;
+          color: black !important;
+          margin: 0 !important;
+          padding: 1cm !important;
+        }
+        .printable-area {
+          position: absolute !important;
+          left: 0 !important;
+          top: 0 !important;
+          width: 100% !important;
+          height: auto !important;
+          max-height: none !important;
+          overflow: visible !important;
+          box-shadow: none !important;
+          border: none !important;
+        }
+        .printable-area-content {
+          color: black !important;
+          background-color: white !important;
+          padding: 0 !important;
+        }
+        .printable-area-content h2,
+        .printable-area-content h3,
+        .printable-area-content p,
+        .printable-area-content summary,
+        .printable-area-content li,
+        .printable-area-content div {
+            color: black !important;
+            background-color: transparent !important;
+        }
+        .printable-area-content svg {
+          border: 1px solid #ccc !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .printable-area details {
+          page-break-inside: avoid;
+          display: block !important;
+          border-bottom: 1px solid #eee;
+          padding-bottom: 1rem;
+          margin-bottom: 1rem;
+        }
+        .printable-area details > summary {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          font-weight: bold !important;
+        }
+        .printable-area details > div {
+          display: block !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          border: none !important;
+        }
+      }
+      
+      /* Styles used for PDF export to create a print-friendly format */
+      .pdf-export-format {
+          background-color: white !important;
+          color: black !important;
+          font-family: Georgia, 'Times New Roman', Times, serif;
+          font-size: 12pt;
+      }
+      .pdf-export-format .chevron-container,
+      .pdf-export-format .no-pdf {
+          display: none !important;
+      }
+      .pdf-export-format h2,
+      .pdf-export-format h3,
+      .pdf-export-format p,
+      .pdf-export-format summary,
+      .pdf-export-format li,
+      .pdf-export-format div,
+      .pdf-export-format ol,
+      .pdf-export-format ul,
+      .pdf-export-format details {
+          color: black !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          border: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          box-shadow: none !important;
+      }
+      .pdf-export-format summary {
+          font-weight: bold;
+          font-size: 16pt;
+          margin-bottom: 12pt !important;
+      }
+      .pdf-export-format p,
+      .pdf-export-format li {
+        line-height: 1.5;
+        margin-bottom: 10pt !important;
+      }
+      .pdf-export-format ol,
+      .pdf-export-format ul {
+        margin-bottom: 12pt !important;
+        padding-left: 2em !important; 
+      }
+      .pdf-export-format details {
+          page-break-inside: avoid;
+          margin-bottom: 24pt !important;
+      }
+
+      /* Custom scrollbar hiding */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      
+      /* Custom prose styles for theme consistency */
+      [data-theme="light"] .prose-invert {
+        --tw-prose-body: var(--text-secondary);
+        --tw-prose-bold: var(--text-primary);
+        --tw-prose-headings: var(--text-primary);
+        --tw-prose-strong: var(--text-primary);
+      }
+      .prose strong {
+        color: var(--text-primary);
+      }
+      .main-menu-background {
+        background-image: url('https://images.unsplash.com/photo-1579809939589-56d19335f470?q=80&w=2938&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+      .main-menu-background::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-color: rgba(17, 24, 39, 0.8);
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash-screen">
+      <img src="https://raw.githubusercontent.com/niwde787/CJF/main/SNAPS_S.svg" alt="Snaps Logo" class="splash-logo" />
+      <div class="progress-bar-container">
+        <div class="progress-bar-value"></div>
+      </div>
+    </div>
+    <noscript>
+      <div style="background-color: #111827; color: #f3f4f6; width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; font-family: sans-serif;">
+        <div>
+          <h1 style="font-size: 2rem; margin-bottom: 1rem;">JavaScript is required to run this application.</h1>
+          <p>Please enable JavaScript in your browser settings and refresh the page.</p>
+        </div>
+      </div>
+    </noscript>
+    <div id="root"></div>
+    <div id="modal-root"></div>
+    
+    <script type="module" src="/index.tsx"></script>
+    <script>
+      // Service worker removed for development stability
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+            console.log('ServiceWorker unregistered');
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

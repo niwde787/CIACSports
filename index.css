@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-football-glow: football-glow 2s ease-in-out infinite;
+
+  --color-custom-orange: #ff6b00;
+  --color-custom-yellow: #ffcc00;
+  --color-custom-gray-100: #f3f4f6;
+  --color-custom-gray-200: #e5e7eb;
+  --color-custom-gray-600: #4b5563;
+  --color-custom-gray-700: #374151;
+  --color-custom-gray-800: #1f2937;
+  --color-custom-gray-900: #111827;
+  --color-team-golden-primary: #fbbf24;
+
+  @keyframes football-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 2px var(--accent-primary)) brightness(1);
+      transform: scale(1);
+    }
+    50% {
+      filter: drop-shadow(0 0 12px var(--accent-primary)) brightness(1.8);
+      transform: scale(1.15);
+    }
+  }
+}

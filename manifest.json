@@ -1,0 +1,28 @@
+{
+  "name": "Live Snaps",
+  "short_name": "Live Snaps",
+  "description": "An application to track the number of plays each player participates in during a junior football game.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/niwde787/CJF/main/CJF_Icon_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/niwde787/CJF/main/CJF_Icon_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/niwde787/CJF/main/SNAPS_S.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
